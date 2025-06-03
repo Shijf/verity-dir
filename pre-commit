@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Git pre-commit hook to verify directory structure
+# 将此文件放在 .git/hooks/ 目录下，并确保其具有执行权限 (chmod +x .git/hooks/pre-commit)
+
+# 获取项目根目录
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+# 执行验证脚本，使用 --git 参数仅验证新增文件
+node "$PROJECT_ROOT/verifyPageStructure.js" --git
+
+# 如果验证脚本返回非零状态码，中止提交
+if [ $? -ne 0 ]; then
+  echo "❌ 提交被中止: 目录结构验证失败。请修复上述问题后重新提交。"
+  exit 1
+fi
+
+# 验证通过，继续提交
+exit 0
